@@ -2,22 +2,52 @@
 
 data segment 
 ; utilities
-    endl db 13, 10, '$'  ; 13 ==> carrige return (cursor at start), 10 ==> new line (move cursor downwards in same column)
+    endl db 13, 10, '$'  ; 13 ==> carrige return (cursor at start), 10 ==> new line (move cursor downwards in same column)   
+    
 ; logo
-    logoLine1 db '   ____        _     $'
-    logoLine2 db '  / __ \____ _(_)____$'  
-    logoLine3 db ' / / / / __ `/ / ___/$'
-    logoLine4 db '/ /_/ / /_/ / (__  ) $'
-    logoLine5 db '\___\_\__,_/_/____/  $'
-    logoLine6 db '~~~~~~~~~~~~~~~~~~~~~$'
+    logoLine1 db ' ______    ________    ________  ______      $'
+    logoLine2 db '/_____/\  /_______/\  /_______/\/_____/\     $'  
+    logoLine3 db '\:::_ \ \ \::: _  \ \ \__.::._\/\::::_\/_    $'
+    logoLine4 db ' \:\ \ \ \_\::(_)  \ \   \::\ \  \:\/___/\   $'
+    logoLine5 db '  \:\ \ /_ \\:: __  \ \  _\::\ \__\_::._\:\  $'
+    logoLine6 db '   \:\_-  \ \\:.\ \  \ \/__\::\__/\ /____\:\ $'
+    logoLine7 db '    \___|\_\_/\__\/\__\/\________\/ \_____\/ $'
+    logoLine8 db '*********************************************$'
     
 ; login information
+    loginUser db 'Enter Username: $'
+    loginPass db 'Enter Password: $'
     user1 db 'Qais$' 
     pass1 db 'CPU/q/$'
     user2 db 'Bassem$'  
     pass2 db 'ALU/b/$'
     user3 db 'Hanna$' 
     pass3 db 'GPU/h/$'
+    
+; Questions
+    q1 db '1. Which dinosaur had a long neck and was one of the largest animals to ever walk the Earth?$'
+    a1 db 'A) Brachiosaurus$'
+    b1 db 'B) Velociraptor$'
+    c1 db 'C) Tyrannosaurus rex$'
+    d1 db 'D) Triceratops$'
+    
+    q2 db '2. What does the name Velociraptor mean?$'
+    a2 db 'A) Fast thief$'
+    b2 db 'B) Swift hunter$'
+    c2 db 'C) Raptor claw$'
+    d2 db 'D) Sharp runner$'
+    
+    q3 db '3. Which dinosaur is believed to have had the most powerful bite?$'
+    a3 db 'A) Tyrannosaurus rex$'
+    b3 db 'B) Spinosaurus$'
+    c3 db 'C) Carnotaurus$'
+    d3 db 'D) Giganotosaurus$'
+    
+    q4 db '4. What was the primary function of the Triceratops three horns?$'
+    a4 db 'A) Defense and combat$'
+    b4 db 'B) Digging$'
+    c4 db 'C) Communication$'
+    d4 db 'D) Climbing obstacles$'
     
 ends
 
@@ -83,21 +113,26 @@ start:
     mov ah, 0x09
     int 21h
     
-;    lea dx, user1
-;    mov ah, 9
-;    int 21h             ; output string at ds:dx
-;    
-;    mov ah, 09          ; store in ah 0x09 to print strings
-;    mov dx, offset endl ; offset operator gives begining of the string
-;    int 21h         
-;     
-;    lea dx, user2
-;    mov ah, 9
-;    int 21h   
-;    ; wait for any key....    
-;    mov ah, 1
-;    int 21h
+    lea dx, logoLine7
+    mov ah, 0x09
+    int 21h
     
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
+    
+    lea dx, logoLine8
+    mov ah, 0x09
+    int 21h
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
+    
+    ; [User Authentication]
+    
+       
+    exit:
     mov ax, 4c00h ; exit to operating system.
     int 21h    
 ends
