@@ -35,8 +35,8 @@ data segment
            db 0
            db 7 dup('$')
            
-    success db 'Logged in Successfully$'
-    fail db 'Login failed$'   
+    success db 'Logged in Successfully!$'
+    fail db 'Login failed!$'   
            
 ; Questions
     q1 db '1. Which dinosaur had a long neck?$'
@@ -278,6 +278,10 @@ start:
     lea dx, fail
     mov ah, 0x09
     int 21h
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h  
     
     lea dx, endl
     mov ah, 0x09
