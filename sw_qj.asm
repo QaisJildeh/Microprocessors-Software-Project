@@ -30,7 +30,10 @@ data segment
     
     passIn db 7
            db 0
-           db 7 dup('$')    
+           db 7 dup('$')
+           
+    success db 'Logged in Successfully$'
+    fail db 'Login failed$'   
            
 ; Questions
     q1 db '1. Which dinosaur had a long neck?$'
@@ -56,7 +59,6 @@ data segment
     b4 db 'B) To dig holes$'
     c4 db 'C) To talk to others$'
     d4 db 'D) To climb rocks$'
-
     
 ends
 
@@ -159,9 +161,9 @@ start:
                     ;    add si, cx      ; si points at last character after user input
                     ;    mov [si], '$'   ; adding delimiter
     
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
+                    ;    lea dx, endl
+                    ;    mov ah, 0x09
+                    ;    int 21h
     
                     ;   debugging          
                     ;    lea dx, userIn
@@ -205,26 +207,79 @@ start:
     cld
     
     testUsername1: 
-;    lea si, user1 
-;    lea di, userIn
-;    mov cx, [di + 1]
-;    add di, 2
-;    rep movsb
+    lea si, user1 
+    lea di, userIn
+    mov cl, [di + 1]   
+    xor ch, ch  
+    add di, 2
+    rep cmpsb
+    je testPassword1
+    jmp testUsername2
+    
+    testPassword1:
+    lea si, pass1 
+    lea di, passIn
+    mov cl, [di + 1]   
+    xor ch, ch  
+    add di, 2
+    rep cmpsb
+    je successful
+    jmp failed
     
     
-    
-    jmp exit 
-                  
     testUsername2:
-    jmp exit      
+    lea si, user2 
+    lea di, userIn 
+    mov cl, [di + 1]   
+    xor ch, ch  
+    add di, 2
+    rep cmpsb
+    je testPassword2
+    jmp testUsername3
+    
+    testPassword2: 
+    lea si, pass2 
+    lea di, passIn
+    mov cl, [di + 1]   
+    xor ch, ch  
+    add di, 2
+    rep cmpsb
+    je successful
+    jmp failed
+          
                  
     testUsername3:
-    jmp exit              
+    lea si, user3 
+    lea di, userIn
+    mov cl, [di + 1]   
+    xor ch, ch  
+    add di, 2
+    rep cmpsb
+    je testPassword3  
+    jmp failed
+          
+    testPassword3:
+    lea si, pass3 
+    lea di, passIn
+    mov cl, [di + 1]   
+    xor ch, ch  
+    add di, 2
+    rep cmpsb
+    je successful
+    jmp failed
+    
                   
     failed:
-    
+    lea dx, fail
+    mov ah, 0x09
+    int 21h
+    jmp exit
     
     successful:
+    lea dx, success
+    mov ah, 0x09
+    int 21h
+    jmp exit
         
        
     exit:
