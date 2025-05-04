@@ -2,7 +2,10 @@
 
 data segment 
 ; utilities
-    endl db 13, 10, '$'  ; 13 ==> carrige return (cursor at start), 10 ==> new line (move cursor downwards in same column)   
+    endl db 13, 10, '$'  ; 13 ==> carrige return (cursor at start), 10 ==> new line (move cursor downwards in same column) 
+    terminate1 db '-----------------------$'
+    terminate2 db '  Program Terminated!  $'
+    terminate3 db '-----------------------$'  
     
 ; logo
     logoLine1 db ' ______    ________    ________  ______      $'
@@ -141,7 +144,9 @@ start:
     int 21h
     
 ; --- [User Authentication] ---
-    
+    mov cx, 3
+    authentication:
+    push cx
     ; print enter username statement
     lea dx, userRequest
     mov ah, 0x09
@@ -273,16 +278,59 @@ start:
     lea dx, fail
     mov ah, 0x09
     int 21h
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
+        
+    pop cx
+    loop authentication 
+    
     jmp exit
     
     successful:
     lea dx, success
     mov ah, 0x09
     int 21h
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
+    
+    pop cx
+    
     jmp exit
         
        
-    exit:
+    exit: 
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
+     
+    lea dx, terminate1
+    mov ah, 0x09
+    int 21h
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h    
+    
+    lea dx, terminate2
+    mov ah, 0x09
+    int 21h
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
+    
+    lea dx, terminate3
+    mov ah, 0x09
+    int 21h
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h 
+    
     mov ax, 4c00h ; exit to operating system.
     int 21h    
 ends
