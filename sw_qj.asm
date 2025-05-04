@@ -26,36 +26,37 @@ data segment
     
     userIn db 7
            db 0
-           db 7 dup(0)
+           db 7 dup('$')
     
     passIn db 7
            db 0
-           db 7 dup(0)    
+           db 7 dup('$')    
            
 ; Questions
-    q1 db '1. Which dinosaur had a long neck and was one of the largest animals to ever walk the Earth?$'
+    q1 db '1. Which dinosaur had a long neck?$'
     a1 db 'A) Brachiosaurus$'
     b1 db 'B) Velociraptor$'
-    c1 db 'C) Tyrannosaurus rex$'
+    c1 db 'C) T. rex$'
     d1 db 'D) Triceratops$'
     
-    q2 db '2. What does the name Velociraptor mean?$'
+    q2 db '2. What does Velociraptor mean?$'
     a2 db 'A) Fast thief$'
-    b2 db 'B) Swift hunter$'
-    c2 db 'C) Raptor claw$'
-    d2 db 'D) Sharp runner$'
+    b2 db 'B) Big hunter$'
+    c2 db 'C) Sharp claw$'
+    d2 db 'D) Fast runner$'
     
-    q3 db '3. Which dinosaur is believed to have had the most powerful bite?$'
-    a3 db 'A) Tyrannosaurus rex$'
+    q3 db '3. Which dinosaur had the strongest bite?$'
+    a3 db 'A) T. rex$'
     b3 db 'B) Spinosaurus$'
     c3 db 'C) Carnotaurus$'
     d3 db 'D) Giganotosaurus$'
     
-    q4 db '4. What was the primary function of the Triceratops three horns?$'
-    a4 db 'A) Defense and combat$'
-    b4 db 'B) Digging$'
-    c4 db 'C) Communication$'
-    d4 db 'D) Climbing obstacles$'
+    q4 db '4. Why did Triceratops have 3 horns?$'
+    a4 db 'A) To fight enemies$'
+    b4 db 'B) To dig holes$'
+    c4 db 'C) To talk to others$'
+    d4 db 'D) To climb rocks$'
+
     
 ends
 
@@ -72,7 +73,7 @@ start:
 
 ;<============ Start of Program! ============>
    
-    ; --- [Print Starting Screen] ---
+; --- [Print Starting Screen] ---
     lea dx, logoLine1
     mov ah, 0x09
     int 21h
@@ -149,28 +150,28 @@ start:
     mov ah, 0x0A
     int 21h 
     
-    ; adding $ to username
-    lea si, userIn
-    add si, 1
-    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
-    xor ch, ch      ; clear ch
-    add si, 1     
-    add si, cx      ; si points at last character after user input
-    mov [si], '$'   ; adding delimiter
+                    ;    ; adding $ to username
+                    ;    lea si, userIn
+                    ;    add si, 1
+                    ;    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
+                    ;    xor ch, ch      ; clear ch
+                    ;    add si, 1     
+                    ;    add si, cx      ; si points at last character after user input
+                    ;    mov [si], '$'   ; adding delimiter
     
     lea dx, endl
     mov ah, 0x09
     int 21h
     
-;   debugging          
-;    lea dx, userIn
-;    add dx, 2
-;    mov ah, 0x09
-;    int 21h 
-;    
-;    lea dx, endl
-;    mov ah, 0x09
-;    int 21h
+                    ;   debugging          
+                    ;    lea dx, userIn
+                    ;    add dx, 2
+                    ;    mov ah, 0x09
+                    ;    int 21h 
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
     
     ; print enter password statement       
     lea dx, passRequest
@@ -182,24 +183,49 @@ start:
     mov ah, 0x0A
     int 21h
 
-    ; adding $ to password
-    lea si, passIn
-    add si, 1
-    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
-    xor ch, ch      ; clear ch
-    add si, 1     
-    add si, cx      ; si points at last character after user input
-    mov [si], '$'   ; adding delimiter
+                    ;    ; adding $ to password
+                    ;    lea si, passIn
+                    ;    add si, 1
+                    ;    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
+                    ;    xor ch, ch      ; clear ch
+                    ;    add si, 1     
+                    ;    add si, cx      ; si points at last character after user input
+                    ;    mov [si], '$'   ; adding delimiter
     
     lea dx, endl
     mov ah, 0x09
-    int 21h
+    int 21h 
     
-;   debugging          
-;    lea dx, passIn
-;    add dx, 2
-;    mov ah, 0x09
-;    int 21h    
+                    ;   debugging          
+                    ;    lea dx, passIn
+                    ;    add dx, 2
+                    ;    mov ah, 0x09
+                    ;    int 21h
+
+    cld
+    
+    testUsername1: 
+;    lea si, user1 
+;    lea di, userIn
+;    mov cx, [di + 1]
+;    add di, 2
+;    rep movsb
+    
+    
+    
+    jmp exit 
+                  
+    testUsername2:
+    jmp exit      
+                 
+    testUsername3:
+    jmp exit              
+                  
+    failed:
+    
+    
+    successful:
+        
        
     exit:
     mov ax, 4c00h ; exit to operating system.
