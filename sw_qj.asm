@@ -15,15 +15,23 @@ data segment
     logoLine8 db '*********************************************$'
     
 ; login information
-    loginUser db 'Enter Username: $'
-    loginPass db 'Enter Password: $'
+    userRequest db 'Enter Username: $'
+    passRequest db 'Enter Password: $'
     user1 db 'Qais$' 
     pass1 db 'CPU/q/$'
     user2 db 'Bassem$'  
     pass2 db 'ALU/b/$'
     user3 db 'Hanna$' 
-    pass3 db 'GPU/h/$'
+    pass3 db 'GPU/h/$'   
     
+    userIn db 7
+           db 0
+           db 7 dup(0)
+    
+    passIn db 7
+           db 0
+           db 7 dup(0)    
+           
 ; Questions
     q1 db '1. Which dinosaur had a long neck and was one of the largest animals to ever walk the Earth?$'
     a1 db 'A) Brachiosaurus$'
@@ -64,7 +72,7 @@ start:
 
 ;<============ Start of Program! ============>
    
-    ; [Print Starting Screen]
+    ; --- [Print Starting Screen] ---
     lea dx, logoLine1
     mov ah, 0x09
     int 21h
@@ -129,8 +137,69 @@ start:
     mov ah, 0x09
     int 21h
     
-    ; [User Authentication]
+; --- [User Authentication] ---
     
+    ; print enter username statement
+    lea dx, userRequest
+    mov ah, 0x09
+    int 21h   
+    
+    ; take 6 characters
+    lea dx, userIn
+    mov ah, 0x0A
+    int 21h 
+    
+    ; adding $ to username
+    lea si, userIn
+    add si, 1
+    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
+    xor ch, ch      ; clear ch
+    add si, 1     
+    add si, cx      ; si points at last character after user input
+    mov [si], '$'   ; adding delimiter
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
+    
+;   debugging          
+;    lea dx, userIn
+;    add dx, 2
+;    mov ah, 0x09
+;    int 21h 
+;    
+;    lea dx, endl
+;    mov ah, 0x09
+;    int 21h
+    
+    ; print enter password statement       
+    lea dx, passRequest
+    mov ah, 0x09
+    int 21h
+    
+    ; enter 6 character password
+    lea dx, passIn
+    mov ah, 0x0A
+    int 21h
+
+    ; adding $ to password
+    lea si, passIn
+    add si, 1
+    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
+    xor ch, ch      ; clear ch
+    add si, 1     
+    add si, cx      ; si points at last character after user input
+    mov [si], '$'   ; adding delimiter
+    
+    lea dx, endl
+    mov ah, 0x09
+    int 21h
+    
+;   debugging          
+;    lea dx, passIn
+;    add dx, 2
+;    mov ah, 0x09
+;    int 21h    
        
     exit:
     mov ax, 4c00h ; exit to operating system.
