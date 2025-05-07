@@ -61,8 +61,24 @@ data segment
     a4 db 'A) To fight enemies$'
     b4 db 'B) To dig holes$'
     c4 db 'C) To talk to others$'
-    d4 db 'D) To climb rocks$'
+    d4 db 'D) To climb rocks$'     
+          
+    ; All correct answers are a     
+    ans1 db 2
+         db 0
+         db 2 dup('$') 
+         
+    ans2 db 2
+         db 0
+         db 2 dup('$') 
+         
+    ans3 db 2
+         db 0
+         db 2 dup('$') 
     
+    ans4 db 2
+         db 0
+         db 2 dup('$') 
 ends
 
 stack segment
@@ -77,266 +93,296 @@ start:
     mov es, ax
 
 ;<============ Start of Program! ============>
-   
-; --- [Print Starting Screen] ---
-    lea dx, logoLine1
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h    
-    
-    lea dx, logoLine2
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, logoLine3
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h 
-    
-    lea dx, logoLine4
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, logoLine5
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, logoLine6
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, logoLine7
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, logoLine8
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-; --- [User Authentication] ---
-    mov cx, 3
-    authentication:
-    push cx
-    ; print enter username statement
-    lea dx, userRequest
-    mov ah, 0x09
-    int 21h   
-    
-    ; take 6 characters
-    lea dx, userIn
-    mov ah, 0x0A
-    int 21h 
-    
-                    ;    ; adding $ to username
-                    ;    lea si, userIn
-                    ;    add si, 1
-                    ;    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
-                    ;    xor ch, ch      ; clear ch
-                    ;    add si, 1     
-                    ;    add si, cx      ; si points at last character after user input
-                    ;    mov [si], '$'   ; adding delimiter
-    
-                    ;    lea dx, endl
-                    ;    mov ah, 0x09
-                    ;    int 21h
-    
-                    ;   debugging          
-                    ;    lea dx, userIn
-                    ;    add dx, 2
-                    ;    mov ah, 0x09
-                    ;    int 21h 
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-    ; print enter password statement       
-    lea dx, passRequest
-    mov ah, 0x09
-    int 21h
-    
-    ; enter 6 character password
-    lea dx, passIn
-    mov ah, 0x0A
-    int 21h
 
-                    ;    ; adding $ to password
-                    ;    lea si, passIn
-                    ;    add si, 1
-                    ;    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
-                    ;    xor ch, ch      ; clear ch
-                    ;    add si, 1     
-                    ;    add si, cx      ; si points at last character after user input
-                    ;    mov [si], '$'   ; adding delimiter
+    call printLogo
+    call userAuthentication
+    call quiz    
+    call terminateProgram
     
-    lea dx, endl
-    mov ah, 0x09
-    int 21h 
+         
+; --- [Print Starting Screen Logo] ---   
+    printLogo proc
+        lea dx, logoLine1
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h    
+        
+        lea dx, logoLine2
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, logoLine3
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h 
+        
+        lea dx, logoLine4
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, logoLine5
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, logoLine6
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, logoLine7
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, logoLine8
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h  
+        
+        ret
+    printLogo endp 
+                           
+                           
+; --- [User Authentication] ---    
+    userAuthentication proc 
+        cld
+        mov cx, 3
+        authentication:
+        push cx
+        ; print enter username statement
+        lea dx, userRequest
+        mov ah, 0x09
+        int 21h   
+        
+        ; take 6 characters
+        lea dx, userIn
+        mov ah, 0x0A
+        int 21h 
+        
+                        ;    ; adding $ to username
+                        ;    lea si, userIn
+                        ;    add si, 1
+                        ;    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
+                        ;    xor ch, ch      ; clear ch
+                        ;    add si, 1     
+                        ;    add si, cx      ; si points at last character after user input
+                        ;    mov [si], '$'   ; adding delimiter
+        
+                        ;    lea dx, endl
+                        ;    mov ah, 0x09
+                        ;    int 21h
+        
+                        ;   debugging          
+                        ;    lea dx, userIn
+                        ;    add dx, 2
+                        ;    mov ah, 0x09
+                        ;    int 21h 
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        ; print enter password statement       
+        lea dx, passRequest
+        mov ah, 0x09
+        int 21h
+        
+        ; enter 6 character password
+        lea dx, passIn
+        mov ah, 0x0A
+        int 21h
     
-                    ;   debugging          
-                    ;    lea dx, passIn
-                    ;    add dx, 2
-                    ;    mov ah, 0x09
-                    ;    int 21h
+                        ;    ; adding $ to password
+                        ;    lea si, passIn
+                        ;    add si, 1
+                        ;    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
+                        ;    xor ch, ch      ; clear ch
+                        ;    add si, 1     
+                        ;    add si, cx      ; si points at last character after user input
+                        ;    mov [si], '$'   ; adding delimiter
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h 
+        
+                        ;   debugging          
+                        ;    lea dx, passIn
+                        ;    add dx, 2
+                        ;    mov ah, 0x09
+                        ;    int 21h
+        
+        testUsername1: 
+        lea si, user1 
+        lea di, userIn
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je testPassword1
+        jmp testUsername2
+        
+        testPassword1:
+        lea si, pass1 
+        lea di, passIn
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je successful
+        jmp failed
+        
+        
+        testUsername2:
+        lea si, user2 
+        lea di, userIn 
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je testPassword2
+        jmp testUsername3
+        
+        testPassword2: 
+        lea si, pass2 
+        lea di, passIn
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je successful
+        jmp failed
+              
+                     
+        testUsername3:
+        lea si, user3 
+        lea di, userIn
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je testPassword3  
+        jmp failed
+              
+        testPassword3:
+        lea si, pass3 
+        lea di, passIn
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je successful
+        jmp failed
+        
+                      
+        failed:
+        lea dx, fail
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h  
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+            
+        pop cx
+        loop authentication 
+        
+        call terminateProgram  
+        
+        successful:
+        lea dx, success
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        pop cx
+        
+        ret
+    userAuthentication endp
+                    
 
-    cld
-    
-    testUsername1: 
-    lea si, user1 
-    lea di, userIn
-    mov cl, [di + 1]   
-    xor ch, ch  
-    add di, 2
-    rep cmpsb
-    je testPassword1
-    jmp testUsername2
-    
-    testPassword1:
-    lea si, pass1 
-    lea di, passIn
-    mov cl, [di + 1]   
-    xor ch, ch  
-    add di, 2
-    rep cmpsb
-    je successful
-    jmp failed
-    
-    
-    testUsername2:
-    lea si, user2 
-    lea di, userIn 
-    mov cl, [di + 1]   
-    xor ch, ch  
-    add di, 2
-    rep cmpsb
-    je testPassword2
-    jmp testUsername3
-    
-    testPassword2: 
-    lea si, pass2 
-    lea di, passIn
-    mov cl, [di + 1]   
-    xor ch, ch  
-    add di, 2
-    rep cmpsb
-    je successful
-    jmp failed
-          
-                 
-    testUsername3:
-    lea si, user3 
-    lea di, userIn
-    mov cl, [di + 1]   
-    xor ch, ch  
-    add di, 2
-    rep cmpsb
-    je testPassword3  
-    jmp failed
-          
-    testPassword3:
-    lea si, pass3 
-    lea di, passIn
-    mov cl, [di + 1]   
-    xor ch, ch  
-    add di, 2
-    rep cmpsb
-    je successful
-    jmp failed
-    
-                  
-    failed:
-    lea dx, fail
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h  
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
+; --- [The Quiz] ---     
+    quiz proc
+       lea dx, success
+       mov ah, 0x09
+       int 21h
         
-    pop cx
-    loop authentication 
-    
-    jmp exit
-    
-    successful:
-    lea dx, success
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-    pop cx
-    
-    jmp exit
-        
+       lea dx, endl
+       mov ah, 0x09
+       int 21h
        
-    exit: 
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-     
-    lea dx, terminate1
-    mov ah, 0x09
-    int 21h
+       ret 
+    quiz endp  
     
-    lea dx, endl
-    mov ah, 0x09
-    int 21h    
-    
-    lea dx, terminate2
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, terminate3
-    mov ah, 0x09
-    int 21h
-    
-    lea dx, endl
-    mov ah, 0x09
-    int 21h 
-    
-    mov ax, 4c00h ; exit to operating system.
-    int 21h    
+                    
+; --- [Program Terimnation Logo] ---             
+    terminateProgram proc
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+         
+        lea dx, terminate1
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h    
+        
+        lea dx, terminate2
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, terminate3
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        mov ax, 4c00h ; exit to operating system.
+        int 21h         
+        
+        ret
+    terminateProgram endp  
 ends
 
 end start ; set entry point and stop the assembler.
