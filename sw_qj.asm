@@ -20,8 +20,10 @@ data segment
 ; login information
     userRequest db 'Enter Username: $'
     passRequest db 'Enter Password: $'
-    user1 db 'Qais$' 
-    pass1 db 'CPU/q/$'
+;   user1 db 'Qais$' 
+;    pass1 db 'CPU/q/$' 
+    user1 db '1$' 
+    pass1 db '1$'
     user2 db 'Bassem$'  
     pass2 db 'ALU/b/$'
     user3 db 'Hanna$' 
@@ -39,46 +41,53 @@ data segment
     fail db 'Login failed!$'   
            
 ; Questions
-    q1 db '1. Which dinosaur had a long neck?$'
-    a1 db 'A) Brachiosaurus$'
-    b1 db 'B) Velociraptor$'
-    c1 db 'C) T. rex$'
-    d1 db 'D) Triceratops$'
+    q1 db 'Q1. Which dinosaur had a long neck?$'
+    a1 db ' A) Brachiosaurus$'
+    b1 db ' B) Velociraptor$'
+    c1 db ' C) T. rex$'
+    d1 db ' D) Triceratops$'
     
-    q2 db '2. What does Velociraptor mean?$'
-    a2 db 'A) Fast thief$'
-    b2 db 'B) Big hunter$'
-    c2 db 'C) Sharp claw$'
-    d2 db 'D) Fast runner$'
+    q2 db 'Q2. What does Velociraptor mean?$'
+    a2 db ' A) Fast thief$'
+    b2 db ' B) Big hunter$'
+    c2 db ' C) Sharp claw$'
+    d2 db ' D) Fast runner$'
     
-    q3 db '3. Which dinosaur had the strongest bite?$'
-    a3 db 'A) T. rex$'
-    b3 db 'B) Spinosaurus$'
-    c3 db 'C) Carnotaurus$'
-    d3 db 'D) Giganotosaurus$'
+    q3 db 'Q3. Which dinosaur had the strongest bite?$'
+    a3 db ' A) T. rex$'
+    b3 db ' B) Spinosaurus$'
+    c3 db ' C) Carnotaurus$'
+    d3 db ' D) Giganotosaurus$'
     
-    q4 db '4. Why did Triceratops have 3 horns?$'
-    a4 db 'A) To fight enemies$'
-    b4 db 'B) To dig holes$'
-    c4 db 'C) To talk to others$'
-    d4 db 'D) To climb rocks$'     
-          
-    ; All correct answers are a     
-    ans1 db 2
-         db 0
-         db 2 dup('$') 
+    q4 db 'Q4. Why did Triceratops have 3 horns?$'
+    a4 db ' A) To fight enemies$'
+    b4 db ' B) To dig holes$'
+    c4 db ' C) To talk to others$'
+    d4 db ' D) To climb rocks$'
+    
+    correctAnswer db 'Correct Answer!$'
+    wrongAnswer db 'Wrong Answer!$'     
+                                
+    answerPrompt db 'Enter Answer: $'
          
-    ans2 db 2
-         db 0
-         db 2 dup('$') 
+    ans1 db 2 dup('$') 
          
-    ans3 db 2
-         db 0
-         db 2 dup('$') 
+    ans2 db 2 dup('$') 
+         
+    ans3 db 2 dup('$') 
     
-    ans4 db 2
-         db 0
-         db 2 dup('$') 
+    ans4 db 2 dup('$')
+    
+    currentQuestion db 0
+
+; Grading
+    score db 48
+    
+    statement1 db 'You scored $'
+    statement2 db '/4!$'
+    
+; Shuffling
+              
 ends
 
 stack segment
@@ -96,7 +105,8 @@ start:
 
     call printLogo
     call userAuthentication
-    call quiz    
+    call quiz 
+    call gradeQuiz   
     call terminateProgram
     
          
@@ -336,17 +346,346 @@ start:
 
 ; --- [The Quiz] ---     
     quiz proc
-       lea dx, success
-       mov ah, 0x09
-       int 21h
+        question1:
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
         
-       lea dx, endl
-       mov ah, 0x09
-       int 21h
+        lea dx, q1
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+         
+        lea dx, a1
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
        
-       ret 
+        lea dx, b1
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+       
+        lea dx, c1
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+       
+        lea dx, d1
+        mov ah, 0x09
+        int 21h
+        
+        mov [currentQuestion], 0x01   ; save question number
+        
+        call choose
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+                  
+                
+        question2:
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, q2
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, a2
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, b2
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, c2
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, d2
+        mov ah, 0x09
+        int 21h
+        
+        mov [currentQuestion], 0x02   ; save question number
+        
+        call choose 
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+                  
+         
+        question3:
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+         
+        lea dx, q3
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, a3
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, b3
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, c3
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, d3
+        mov ah, 0x09
+        int 21h
+        
+        mov [currentQuestion], 0x03   ; save question number
+        
+        call choose 
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+                  
+        
+        question4:
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+         
+        lea dx, q4
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, a4
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, b4
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, c4
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, d4
+        mov ah, 0x09
+        int 21h
+                    
+        mov [currentQuestion], 0x04   ; save question number         
+        
+        call choose 
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+         
+        ret 
     quiz endp  
-    
+               
+
+; --- [Take Answer] ---              
+    choose proc
+        incorrectInput:
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, answerPrompt
+        mov ah, 0x09
+        int 21h
+        
+        mov ah, 0x01
+        int 21h
+        
+        call isValidAnswer
+        loop incorrectInput
+        
+        ret
+    choose endp
+
+
+; --- [Is Valid Answer] ---
+    isValidAnswer proc
+        cmp al, 'A'
+        je toLower 
+        
+        cmp al, 'a'
+        je save
+        
+        cmp al, 'B'
+        je toLower 
+        
+        cmp al, 'b'
+        je save
+        
+        cmp al, 'C'
+        je toLower 
+        
+        cmp al, 'c'
+        je save
+        
+        cmp al, 'D'
+        je toLower 
+        
+        cmp al, 'd'
+        je save
+               
+        mov cx, 0x0002
+        ret
+        
+        toLower:
+        or al, 0x20
+           
+        save:
+        mov cx, 0x0001
+        
+        mov bl, currentQuestion
+        
+        cmp bl, 1
+        je saveAnswerQ1
+        
+        cmp bl, 2
+        je saveAnswerQ2
+        
+        cmp bl, 3
+        je saveAnswerQ3
+        
+        cmp bl, 4
+        je saveAnswerQ4 
+        
+        saveAnswerQ1:
+        mov [ans1], al
+        jmp updateScore
+        
+        saveAnswerQ2:
+        mov [ans2], al
+        jmp updateScore
+        
+        saveAnswerQ3:
+        mov [ans3], al
+        jmp updateScore
+        
+        saveAnswerQ4:
+        mov [ans4], al
+        jmp updateScore  
+        
+        updateScore:
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        cmp al, 'a'
+        jne incorrectChoiceChosen
+        mov dl, [score]
+        add dl, 1
+        mov [score], dl
+        
+        lea dx, correctAnswer
+        mov ah, 0x09
+        int 21h
+        
+        ret
+        
+        incorrectChoiceChosen:
+        lea dx, wrongAnswer
+        mov ah, 0x09
+        int 21h
+        
+        ret   
+    isValidAnswer endp
+        
+        
+; --- [Grade Quiz] ---
+    gradeQuiz proc  
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, statement1
+        mov ah, 0x09
+        int 21h
+                          
+        mov ah, 0x02
+        mov dl, [score]
+        int 21h                  
+                          
+        lea dx, statement2
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        ret
+    gradeQuiz endp  
                     
 ; --- [Program Terimnation Logo] ---             
     terminateProgram proc
