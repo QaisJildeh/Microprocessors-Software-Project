@@ -96,7 +96,8 @@ data segment
     items db 1, 2, 3, 4, 5
     seed db 113 
     
-;       
+; Scoreboard
+         
 ends
 
 stack segment
