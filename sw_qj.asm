@@ -94,7 +94,9 @@ data segment
     
 ; Shuffling
     items db 1, 2, 3, 4, 5
-    seed db 1       
+    seed db 113 
+    
+;       
 ends
 
 stack segment
@@ -430,6 +432,7 @@ start:
         
         lea si, [items]
         mov cx, 0x0004
+        cld
         nextQuestion:
         mov bx, si
         add bx, cx
