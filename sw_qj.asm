@@ -20,10 +20,8 @@ data segment
 ; login information
     userRequest db 'Enter Username: $'
     passRequest db 'Enter Password: $'
-;   user1 db 'Qais$' 
-;    pass1 db 'CPU/q/$' 
-    user1 db '1$' 
-    pass1 db '1$'
+    user1 db 'Qais$'   
+    pass1 db 'CPU/q/$' 
     user2 db 'Bassem$'  
     pass2 db 'ALU/b/$'
     user3 db 'Hanna$' 
@@ -41,29 +39,35 @@ data segment
     fail db 'Login failed!$'   
            
 ; Questions
-    q1 db 'Q1. Which dinosaur had a long neck?$'
-    a1 db ' A) Brachiosaurus$'
-    b1 db ' B) Velociraptor$'
-    c1 db ' C) T. rex$'
-    d1 db ' D) Triceratops$'
-    
-    q2 db 'Q2. What does Velociraptor mean?$'
-    a2 db ' A) Fast thief$'
-    b2 db ' B) Big hunter$'
-    c2 db ' C) Sharp claw$'
-    d2 db ' D) Fast runner$'
-    
-    q3 db 'Q3. Which dinosaur had the strongest bite?$'
-    a3 db ' A) T. rex$'
-    b3 db ' B) Spinosaurus$'
-    c3 db ' C) Carnotaurus$'
-    d3 db ' D) Giganotosaurus$'
-    
-    q4 db 'Q4. Why did Triceratops have 3 horns?$'
-    a4 db ' A) To fight enemies$'
-    b4 db ' B) To dig holes$'
-    c4 db ' C) To talk to others$'
-    d4 db ' D) To climb rocks$'
+    q1 db 'Q1. Who zooms through the story as the star of Cars?$'
+    a1 db ' A) Lightning McQueen$'
+    b1 db ' B) Tow Mater$'
+    c1 db ' C) Doc Hudson$'
+    d1 db ' D) Chick Hicks$'
+
+    q2 db 'Q2. What kind of vehicle is Mater, Lightning’s goofy best bud?$'
+    a2 db ' A) A race car$'
+    b2 db ' B) A monster truck$'
+    c2 db ' C) A tow truck$'
+    d2 db ' D) A fire truck$'
+
+    q3 db 'Q3. Where does McQueen end up after falling out of his trailer?$'
+    a3 db ' A) Radiator Springs$'
+    b3 db ' B) Thunder Hollow$'
+    c3 db ' C) Los Angeles$'
+    d3 db ' D) Dinoco HQ$'
+
+    q4 db 'Q4. Who is the wise old car that once ruled the racetrack?$'
+    a4 db ' A) Ramone$'
+    b4 db ' B) The King$'
+    c4 db ' C) Cruz Ramirez$'
+    d4 db ' D) Doc Hudson$'
+
+    q5 db 'Q5. What number is Lightning McQueen proud to wear?$'
+    a5 db ' A) 43$'
+    b5 db ' B) 95$'
+    c5 db ' C) 86$'
+    d5 db ' D) 51$'
     
     correctAnswer db 'Correct Answer!$'
     wrongAnswer db 'Wrong Answer!$'     
@@ -76,7 +80,9 @@ data segment
          
     ans3 db 2 dup('$') 
     
-    ans4 db 2 dup('$')
+    ans4 db 2 dup('$') 
+    
+    ans5 db 2 dup('$')
     
     currentQuestion db 0
 
@@ -87,7 +93,8 @@ data segment
     statement2 db '/4!$'
     
 ; Shuffling
-              
+    items db 1, 2, 3, 4, 5
+    seed db 1       
 ends
 
 stack segment
@@ -342,8 +349,81 @@ start:
         
         ret
     userAuthentication endp
-                    
 
+
+; --- [Shuffling Algorithm] --- 
+    shuffleQuiz proc
+        ShuffleLoop:
+        ; Generate random index (0-4)
+        MOV AL, Seed             ; Current seed value
+        MOV AH, 0                ; Clear AH for multiplication
+        MOV CL, 4                ; Scaling factor
+        MUL CL                   ; AX = AL * 4
+        MOV BL, 5                ; Modulo 5
+        DIV BL                   ; AX / 5 ? AL=quotient, AH=remainder
+        MOV DL, AH               ; Random index (0-4) in DL
+        
+        ; Swap Items[DL] with another item based on DL
+        MOV SI, OFFSET Items     ; Address of Items array
+        
+        CMP DL, 0
+        JE Swap00
+        CMP DL, 1
+        JE Swap01
+        CMP DL, 2
+        JE Swap02
+        CMP DL, 3
+        JE Swap03
+        CMP DL, 4
+        JE Swap04
+        
+        Swap00:                  ; Swap Items[0] and Items[1]
+        MOV AL, [SI]
+        MOV BL, [SI + 1]
+        MOV [SI], BL
+        MOV [SI + 1], AL
+        JMP DoneSwap
+        
+        Swap01:                  ; Swap Items[1] and Items[2]
+        MOV AL, [SI + 1]
+        MOV BL, [SI + 2]
+        MOV [SI + 1], BL
+        MOV [SI + 2], AL
+        JMP DoneSwap
+        
+        Swap02:                  ; Swap Items[2] and Items[3]
+        MOV AL, [SI + 2]
+        MOV BL, [SI + 3]
+        MOV [SI + 2], BL
+        MOV [SI + 3], AL
+        JMP DoneSwap
+        
+        Swap03:                  ; Swap Items[3] and Items[4]
+        MOV AL, [SI + 3]
+        MOV BL, [SI + 4]
+        MOV [SI + 3], BL
+        MOV [SI + 4], AL
+        JMP DoneSwap
+        
+        Swap04:                  ; Swap Items[0] and Items[4]
+        MOV AL, [SI]
+        MOV BL, [SI + 4]
+        MOV [SI], BL
+        MOV [SI + 4], AL
+        JMP DoneSwap
+        
+        DoneSwap:
+        ; Update seed for next iteration
+        MOV AL, Seed
+        MOV BL, 7
+        MUL BL                   ; AL = AL * 7
+        ADD AL, 3                ; AL = AL + 3
+        MOV Seed, AL             ; Store updated seed
+        
+        ret
+    shuffleQuiz endp
+
+                  
 ; --- [The Quiz] ---     
     quiz proc
         question1:
@@ -543,9 +623,57 @@ start:
         
         lea dx, endl
         mov ah, 0x09
+        int 21h 
+        
+        question5:
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+         
+        lea dx, q5
+        mov ah, 0x09
         int 21h
         
-         
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, a5
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, b5
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, c5
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+        
+        lea dx, d5
+        mov ah, 0x09
+        int 21h
+                    
+        mov [currentQuestion], 0x05   ; save question number         
+        
+        call choose 
+        
+        lea dx, endl
+        mov ah, 0x09
+        int 21h
+           
         ret 
     quiz endp  
                
@@ -565,6 +693,20 @@ start:
         int 21h
         
         call isValidAnswer
+        cmp cx, 2
+        je beepbeep
+        jmp endOfLoop
+        
+        beepbeep:
+        mov ah, 02h
+        mov dl, 07h   
+        int 21h       ; first beep
+        
+        mov ah, 02h
+        mov dl, 07h
+        int 21h       ; second beep
+        
+        endOfLoop:
         loop incorrectInput
         
         ret
@@ -620,6 +762,9 @@ start:
         cmp bl, 4
         je saveAnswerQ4 
         
+        cmp bl, 5
+        je saveAnswerQ5 
+        
         saveAnswerQ1:
         mov [ans1], al
         jmp updateScore
@@ -634,15 +779,57 @@ start:
         
         saveAnswerQ4:
         mov [ans4], al
-        jmp updateScore  
+        jmp updateScore
         
-        updateScore:
+        saveAnswerQ5:
+        mov [ans5], al
+        jmp updateScore   
+        
+        updateScore: 
+        xor ah, ah
+        push ax
+        
         lea dx, endl
         mov ah, 0x09
         int 21h
         
+        pop ax
+                 
+        cmp bl, 1
+        jne questionScoring2 
         cmp al, 'a'
+        je addScore
         jne incorrectChoiceChosen
+        
+        questionScoring2:
+        cmp bl, 2
+        jne questionScoring3 
+        cmp al, 'c' 
+        je addScore
+        jne incorrectChoiceChosen
+        
+        questionScoring3:
+        cmp bl, 3
+        jne questionScoring4 
+        cmp al, 'a' 
+        je addScore
+        jne incorrectChoiceChosen
+        
+        questionScoring4:
+        cmp bl, 4
+        jne questionScoring5 
+        cmp al, 'd'
+        je addScore 
+        jne incorrectChoiceChosen
+        
+        questionScoring5:
+        cmp bl, 5
+        jne incorrectChoiceChosen
+        cmp al, 'b'
+        je addScore 
+        jne incorrectChoiceChosen
+        
+        addScore:
         mov dl, [score]
         add dl, 1
         mov [score], dl
@@ -657,6 +844,14 @@ start:
         lea dx, wrongAnswer
         mov ah, 0x09
         int 21h
+        
+        mov ah, 02h
+        mov dl, 07h   
+        int 21h       ; first beep
+        
+        mov ah, 02h
+        mov dl, 07h
+        int 21h       ; second beep
         
         ret   
     isValidAnswer endp
@@ -687,7 +882,7 @@ start:
         ret
     gradeQuiz endp  
                     
-; --- [Program Terimnation Logo] ---             
+; --- [Program Terimnation Logo + Exit] ---             
     terminateProgram proc
         lea dx, endl
         mov ah, 0x09
