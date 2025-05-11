@@ -425,7 +425,39 @@ start:
 
                   
 ; --- [The Quiz] ---     
-    quiz proc
+    quiz proc 
+        call shuffleQuiz
+        
+        lea si, [items]
+        mov cx, 0x0004
+        nextQuestion:
+        mov bx, si
+        add bx, cx
+        mov bl, [bx] 
+        xor bh, bh
+        
+        push cx
+        cmp bl, 1
+        je question1
+        
+        cmp bl, 2
+        je question2
+        
+        cmp bl, 3
+        je question3
+        
+        cmp bl, 4
+        je question4 
+        
+        cmp bl, 5
+        je question5 
+         
+        backToLoop:
+        pop cx
+        loop nextQuestion
+        
+        ret
+         
         question1:
         lea dx, endl
         mov ah, 0x09
@@ -474,6 +506,8 @@ start:
         lea dx, endl
         mov ah, 0x09
         int 21h
+        
+        jmp backToLoop
                   
                 
         question2:
@@ -524,7 +558,9 @@ start:
         lea dx, endl
         mov ah, 0x09
         int 21h
-                  
+        
+        jmp backToLoop
+                
          
         question3:
         lea dx, endl
@@ -574,7 +610,9 @@ start:
         lea dx, endl
         mov ah, 0x09
         int 21h
-                  
+        
+        jmp backToLoop
+                 
         
         question4:
         lea dx, endl
@@ -623,7 +661,10 @@ start:
         
         lea dx, endl
         mov ah, 0x09
-        int 21h 
+        int 21h
+        
+        jmp backToLoop
+         
         
         question5:
         lea dx, endl
@@ -673,6 +714,8 @@ start:
         lea dx, endl
         mov ah, 0x09
         int 21h
+        
+        jmp backToLoop
            
         ret 
     quiz endp  
