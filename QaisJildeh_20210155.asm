@@ -100,6 +100,15 @@ data segment
     qaisScore db 48
     bassemScore db 48
     hannaScore db 48
+                  
+    scoreTitle db 'SCOREBOARD$'
+    scoreboardLine db '----------$'
+    firstName dw ?
+    firstScore db ?
+    secondName dw ?
+    secondScore db ?
+    thirdName dw ?
+    thirdScore db ?
          
 ends
 
@@ -126,7 +135,8 @@ start:
     call quiz 
     call gradeQuiz
     pop cx  
-    loop restart  
+    loop restart
+    call printScoreboard  
     call terminateProgram
 
 
@@ -837,7 +847,7 @@ start:
         je updateBassemScore
         jmp checkIfHanna
         
-        checkIfHanna
+        checkIfHanna:
         lea si, user3 
         lea di, userIn
         mov cl, [di + 1]   
@@ -848,13 +858,13 @@ start:
         ret
         
         updateQaisScore:
-        mov bl, [score]
+        mov bl, [score] 
         mov [qaisScore], bl
         jmp finishedGrading
         
         updateBassemScore:
         mov bl, [score]
-        mov [qaisScore], bl
+        mov [bassemScore], bl
         jmp finishedGrading
         
         updateHannaScore:
@@ -862,11 +872,216 @@ start:
         mov [hannaScore], bl
         
         finishedGrading:
-        xor bl, bl
+        mov bl, 48
         mov [score], bl 
         
         ret
     gradeQuiz endp  
+    
+    
+; --- [Scoreboard] ---
+    printScoreboard proc
+        mov al, [qaisScore]
+        cmp al, [bassemScore]
+        jae qais_ge_bassem
+        jmp bassem_gt_qais
+    
+        qais_ge_bassem:
+        cmp al, [hannaScore]
+        jae qais_first
+        jmp hanna_first
+    
+        bassem_gt_qais:
+        mov al, [bassemScore]
+        cmp al, [hannaScore]
+        jae bassem_first
+        jmp hanna_first
+    
+        qais_first:
+        lea ax, user1   
+        mov [firstName], ax
+        mov al, [qaisScore]
+        mov [firstScore], al
+        
+        mov al, [bassemScore]
+        cmp al, [hannaScore]
+        jae bassem_second_qais_first
+        jmp hanna_second_qais_first
+    
+        bassem_second_qais_first:
+        lea ax, user2
+        mov [secondName], ax
+        mov al, [bassemScore]
+        mov [secondScore], al 
+        
+        lea ax, user3
+        mov [thirdName], ax
+        mov al, [hannaScore]
+        mov [thirdScore], al
+        
+        jmp print_sorted
+    
+        hanna_second_qais_first:
+        lea ax, user3
+        mov [secondName], ax
+        mov al, [hannaScore]
+        mov [secondScore], al 
+        
+        lea ax, user2
+        mov [thirdName], ax
+        mov al, [bassemScore]
+        mov [thirdScore], al
+        
+        jmp print_sorted
+    
+        bassem_first:
+        lea ax, user2
+        mov [firstName], ax
+        mov al, [bassemScore]
+        mov [firstScore], al 
+        
+        mov al, [qaisScore]
+        cmp al, [hannaScore]
+        jae qais_second_bassem_first
+        jmp hanna_second_bassem_first
+    
+        qais_second_bassem_first:
+        lea ax, user1
+        mov [secondName], ax
+        mov al, [qaisScore]
+        mov [secondScore], al  
+        
+        lea ax, user3
+        mov [thirdName], ax
+        mov al, [hannaScore]
+        mov [thirdScore], al 
+        
+        jmp print_sorted
+    
+        hanna_second_bassem_first:
+        lea ax, user3
+        mov [secondName], ax
+        mov al, [hannaScore]
+        mov [secondScore], al 
+        
+        lea ax, user1
+        mov [thirdName], ax
+        mov al, [qaisScore]
+        mov [thirdScore], al
+        
+        jmp print_sorted
+    
+        hanna_first:
+        lea ax, user3
+        mov [firstName], ax
+        mov al, [hannaScore]
+        mov [firstScore], al 
+        
+        mov al, [qaisScore]
+        cmp al, [bassemScore]
+        jae qais_second_hanna_first
+        jmp bassem_second_hanna_first
+    
+        qais_second_hanna_first:
+        lea ax, user1
+        mov [secondName], ax
+        mov al, [qaisScore]
+        mov [secondScore], al  
+        
+        lea ax, user2
+        mov [thirdName], ax
+        mov al, [bassemScore]
+        mov [thirdScore], al 
+        
+        jmp print_sorted
+    
+        bassem_second_hanna_first:
+        lea ax, user2
+        mov [secondName], ax
+        mov al, [bassemScore]
+        mov [secondScore], al
+        
+        lea ax, user1
+        mov [thirdName], ax
+        mov al, [qaisScore]
+        mov [thirdScore], al
+        
+        jmp print_sorted
+    
+    print_sorted:
+        call println
+
+        lea dx, scoreTitle
+        mov ah, 0x09
+        int 21h
+        
+        call println  
+        
+        lea dx, scoreboardLine
+        mov ah, 0x09
+        int 21h
+        
+        call println
+        
+        ; Print first place
+        mov dx, [firstName]
+        mov ah, 0x09
+        int 21h
+        
+        mov dl, ':'
+        mov ah, 0x02
+        int 21h
+        
+        mov dl, ' '
+        mov ah, 0x02
+        int 21h
+        
+        mov dl, [firstScore]
+        mov ah, 0x02
+        int 21h
+        
+        call println
+    
+        ; Print second place
+        mov dx, [secondName]
+        mov ah, 0x09
+        int 21h
+        
+        mov dl, ':'
+        mov ah, 0x02
+        int 21h
+        
+        mov dl, ' '
+        mov ah, 0x02
+        int 21h
+        
+        mov dl, [secondScore]
+        mov ah, 0x02
+        int 21h
+        
+        call println
+    
+        ; Print third place
+        mov dx, [thirdName]
+        mov ah, 0x09
+        int 21h
+        
+        mov dl, ':'
+        mov ah, 0x02
+        int 21h
+        
+        mov dl, ' '
+        mov ah, 0x02
+        int 21h
+        
+        mov dl, [thirdScore]
+        mov ah, 0x02
+        int 21h
+        
+        call println
+        
+        ret
+    printScoreboard endp
                     
 ; --- [Program Terimnation Logo + Exit] ---             
     terminateProgram proc
