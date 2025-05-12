@@ -1,4 +1,4 @@
-; multi-segment executable file template.
+; Qais Jildeh 20210155
 
 data segment 
 ; utilities
