@@ -31,7 +31,7 @@ data segment
            db 0
            db 7 dup('$')
     
-    passIn db 7
+    passIn db 7  
            db 0
            db 7 dup('$')
            
@@ -74,14 +74,10 @@ data segment
                                 
     answerPrompt db 'Enter Answer: $'
          
-    ans1 db 2 dup('$') 
-         
-    ans2 db 2 dup('$') 
-         
+    ans1 db 2 dup('$')      
+    ans2 db 2 dup('$')    
     ans3 db 2 dup('$') 
-    
     ans4 db 2 dup('$') 
-    
     ans5 db 2 dup('$')
     
     currentQuestion db 0
