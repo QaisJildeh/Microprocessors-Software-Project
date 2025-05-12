@@ -97,6 +97,9 @@ data segment
     seed db 113 
     
 ; Scoreboard
+    qaisScore db 48
+    bassemScore db 48
+    hannaScore db 48
          
 ends
 
@@ -114,11 +117,27 @@ start:
 ;<============ Start of Program! ============>
 
     call printLogo
+    mov cx, 3
+    restart:
+    cld
+    push cx
     call userAuthentication
+    call shuffleQuiz
     call quiz 
-    call gradeQuiz   
+    call gradeQuiz
+    pop cx  
+    loop restart  
     call terminateProgram
-    
+
+
+; --- [Print New Line] ---
+    println proc
+        lea dx, endl
+        mov ah, 0x09
+        int 21h 
+        
+        ret
+    println endp    
          
 ; --- [Print Starting Screen Logo] ---   
     printLogo proc
@@ -126,65 +145,49 @@ start:
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h    
+        call println   
         
         lea dx, logoLine2
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, logoLine3
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h 
+        call println 
         
         lea dx, logoLine4
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, logoLine5
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, logoLine6
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, logoLine7
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, logoLine8
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h  
+        call println 
         
         ret
     printLogo endp 
@@ -192,7 +195,9 @@ start:
                            
 ; --- [User Authentication] ---    
     userAuthentication proc 
-        cld
+        call println
+        
+        cld                  
         mov cx, 3
         authentication:
         push cx
@@ -206,28 +211,7 @@ start:
         mov ah, 0x0A
         int 21h 
         
-                        ;    ; adding $ to username
-                        ;    lea si, userIn
-                        ;    add si, 1
-                        ;    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
-                        ;    xor ch, ch      ; clear ch
-                        ;    add si, 1     
-                        ;    add si, cx      ; si points at last character after user input
-                        ;    mov [si], '$'   ; adding delimiter
-        
-                        ;    lea dx, endl
-                        ;    mov ah, 0x09
-                        ;    int 21h
-        
-                        ;   debugging          
-                        ;    lea dx, userIn
-                        ;    add dx, 2
-                        ;    mov ah, 0x09
-                        ;    int 21h 
-        
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         ; print enter password statement       
         lea dx, passRequest
@@ -238,25 +222,9 @@ start:
         lea dx, passIn
         mov ah, 0x0A
         int 21h
-    
-                        ;    ; adding $ to password
-                        ;    lea si, passIn
-                        ;    add si, 1
-                        ;    mov cl, [si]    ; cl = si + 1 ==> the number of characters enetred by the user                                                    
-                        ;    xor ch, ch      ; clear ch
-                        ;    add si, 1     
-                        ;    add si, cx      ; si points at last character after user input
-                        ;    mov [si], '$'   ; adding delimiter
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h 
+        call println 
         
-                        ;   debugging          
-                        ;    lea dx, passIn
-                        ;    add dx, 2
-                        ;    mov ah, 0x09
-                        ;    int 21h
         
         testUsername1: 
         lea si, user1 
@@ -326,13 +294,9 @@ start:
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h  
+        call println
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
             
         pop cx
         loop authentication 
@@ -344,9 +308,7 @@ start:
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         pop cx
         
@@ -429,8 +391,6 @@ start:
                   
 ; --- [The Quiz] ---     
     quiz proc 
-        call shuffleQuiz
-        
         lea si, [items]
         mov cx, 0x0004
         cld
@@ -463,41 +423,31 @@ start:
         ret
          
         question1:
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, q1
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
          
         lea dx, a1
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
        
         lea dx, b1
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
        
         lea dx, c1
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
        
         lea dx, d1
         mov ah, 0x09
@@ -507,49 +457,37 @@ start:
         
         call choose
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         jmp backToLoop
                   
                 
         question2:
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, q2
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, a2
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, b2
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, c2
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, d2
         mov ah, 0x09
@@ -559,49 +497,37 @@ start:
         
         call choose 
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         jmp backToLoop
                 
          
         question3:
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
          
         lea dx, q3
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, a3
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, b3
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, c3
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, d3
         mov ah, 0x09
@@ -611,49 +537,37 @@ start:
         
         call choose 
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         jmp backToLoop
                  
         
         question4:
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
          
         lea dx, q4
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, a4
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, b4
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, c4
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, d4
         mov ah, 0x09
@@ -663,49 +577,37 @@ start:
         
         call choose 
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         jmp backToLoop
          
         
         question5:
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
          
         lea dx, q5
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, a5
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, b5
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, c5
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, d5
         mov ah, 0x09
@@ -715,9 +617,7 @@ start:
         
         call choose 
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         jmp backToLoop
            
@@ -728,9 +628,7 @@ start:
 ; --- [Take Answer] ---              
     choose proc
         incorrectInput:
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, answerPrompt
         mov ah, 0x09
@@ -836,9 +734,7 @@ start:
         xor ah, ah
         push ax
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         pop ax
                  
@@ -906,9 +802,7 @@ start:
         
 ; --- [Grade Quiz] ---
     gradeQuiz proc  
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, statement1
         mov ah, 0x09
@@ -922,42 +816,79 @@ start:
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println  
+        
+        lea si, user1 
+        lea di, userIn
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je updateQaisScore
+        jmp checkIfBassem
+        
+        checkIfBassem:
+        lea si, user2 
+        lea di, userIn
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je updateBassemScore
+        jmp checkIfHanna
+        
+        checkIfHanna
+        lea si, user3 
+        lea di, userIn
+        mov cl, [di + 1]   
+        xor ch, ch  
+        add di, 2
+        rep cmpsb
+        je updateHannaScore
+        ret
+        
+        updateQaisScore:
+        mov bl, [score]
+        mov [qaisScore], bl
+        jmp finishedGrading
+        
+        updateBassemScore:
+        mov bl, [score]
+        mov [qaisScore], bl
+        jmp finishedGrading
+        
+        updateHannaScore:
+        mov bl, [score]
+        mov [hannaScore], bl
+        
+        finishedGrading:
+        xor bl, bl
+        mov [score], bl 
         
         ret
     gradeQuiz endp  
                     
 ; --- [Program Terimnation Logo + Exit] ---             
     terminateProgram proc
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
          
         lea dx, terminate1
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h    
+        call println   
         
         lea dx, terminate2
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         lea dx, terminate3
         mov ah, 0x09
         int 21h
         
-        lea dx, endl
-        mov ah, 0x09
-        int 21h
+        call println
         
         mov ax, 4c00h ; exit to operating system.
         int 21h         
